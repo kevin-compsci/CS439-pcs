@@ -1,0 +1,477 @@
+                     +--------------------------+
+                     |           CS 439         |
+                     | PROJECT 2: USER PROGRAMS |
+                     |      DESIGN DOCUMENT     |
+                     +--------------------------+
+
+****EACH student submits a (unique) design document.****
+
+---- Name ----
+
+>> Fill your name, UT EID, CS login, email address, and unique number:
+
+Name: Kevin Nguyen
+EID: kdn433
+CS login: kxnguyen
+Email: kxnguyen60@gmail.com
+Unique Number: 51075
+
+Slip days used on this project:
+
+---- GROUP ----
+
+>> Fill the names, UT EIDs, CS logins, email addresses, and unique numbers
+>> of your group members.  Also fill in each person's ranking on the 
+>> partner evaluation scale, as determined by you.
+
+Name1: Sangwon Lee
+EID1: sl34645
+CS Login: bearbox
+Email: fhqksl@hotmail.com
+Unique Number: 51100
+Ranking (scale below): Excellent
+
+
+---- PARTNER EVALUATION SCALE ----
+
+>> Excellent: Consistently went above and beyond - tutored others, carried
+>> more than his/her fair share of the load.
+
+>> Very Good: Consistently did what he/she was supposed to do, very well
+>> prepared and cooperative.
+
+>> Satisfactory: Usually did what he/she was supposed to do, minimally
+>> prepared and cooperative.
+
+>> Marginal: Sometimes failed to show up and/or rarely prepared.
+
+>> Deficient: Often failed to show up and/or rarely prepared.
+
+>> Unsatisfactory: Consistently failed to show up and/or unprepared.
+
+>> Superficial: Practically no participation.
+
+>> No Show: No participation at all.
+
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+			   ARGUMENT PASSING
+			   ================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+There weren't many changed or new struct memebers, typedef or global variables for 
+argument passing. Everything was implemented into the setup stack function in process.c. 
+There are several conditional checks in place that enables the logic flow to be stopped 
+if an error occurs; return if errors exist otherwise return appropriate value.
+
+---- ALGORITHMS ----
+
+>> A2: Briefly describe how you implemented argument parsing.  How do
+>> you arrange for the elements of argv[] to be in the right order?
+>> How do you avoid overflowing the stack page?  Is it enough to limit
+>> the size of the incoming commandline?  Why or Why not?
+
+Argument passing was implemented by allocating the page for the stack and to use the 
+concepts of the stack and virtual memory addressing. A memory copy of tokens, from 
+command line, are placed into the argv[] array in reverse; a counter starting at argc 
+value will decrement until zero. Basically, each token in the command line is read from 
+right to left and placed into argv[] array. We keep an eye on PHYS_BASE, type sizes, 
+and stack pointer positions for the stack. Stack overflowing is handled by allocating 
+the sizes by type because we want to be close to an exact amount that doesn't seem too 
+little or too much. Argument length is consistently checked while processing tokens to 
+the stack. When the program is finished the stack page is deallocated. However, it is 
+enough to limit the size of the command line because for an infinite amount of tokens 
+in the command line the size of the pages will get infinitely larger. Eventually, an 
+overflow may occur from allocating too much space for too many command line tokens. 
+
+---- RATIONALE ----
+
+>> A3: Why does Pintos implement strtok_r() but not strtok()?
+
+strtok_r() is a reentrant function (thread-safe function) where interrupts can occur 
+while obtaining the tokens from the command line. If we used strtok(), it has a static 
+pointer save the states and the program must run through the function until it can be 
+interrupted and it also increases pause time within Pintos.
+
+>> A4: In Pintos, the kernel separates commands into a executable name
+>> and arguments.  In Unix-like systems, the shell does this
+>> separation.  Identify at least two advantages of the Unix approach.
+
+Two advantages to the Unix approach is organization and searching. The unix system can 
+organize files and arguments separately so the simplicity of commands can be caught if 
+unsafe for the kernel. We want to reduce the complexity of kernel operations. Likewise 
+searching, for a particular file can be flexible and easy. Search can sometimes be 
+expensive and Pintos would need some processing time to look for the file during the 
+initializing phase. 
+
+
+			     SYSTEM CALLS
+			     ============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+
+struct child
+  {
+    struct list child_list;
+  };
+
+This struct will let us keep track of a list of child processes. Each child process has 
+a unique set of associated data.
+
+
+struct list_file
+  {
+    struct list file_list;
+  };
+
+This struct will let us keep track of a list of files that were allocated and opened. 
+We use the list remove and close later.
+
+
+    int fd;				
+
+File descriptor is an identifier for the file located in the child process. Several 
+system calls rely on file descriptor to work.
+
+
+    int load_status;			
+
+Load status will indicate if load was successful or not.  If fail, then exit; however, 
+if success, then continue.
+
+
+    char *file_name;			
+
+File name is the name of the file that will used for reference and to load the correct 
+executable.
+
+
+    tid_t parent;                       
+
+Parent tid is used the same way as a process pid. Pintos has one thread per process.
+
+
+    struct child_process *child_proc;   
+
+Child_proc is the child process that will be used to execute the file and help keep 
+track of its children.
+
+
+    struct child child_list;		
+
+Child_list is the name of the list that will be used to maintain a list of child and to 
+remove them all later.
+
+
+    struct list_file file_list;		
+
+File_list is the name of the list that will be used to maintain a list of opened files 
+and to remove them all later.
+
+
+    struct semaphore sema_wait;		
+
+Sema_wait is a semaphore for synchronization and to prevent race conditions.
+
+
+    struct semaphore sema_load;         
+
+Sema_load is a semaphore for synchronization and to prevent race conditions during load.
+
+
+    struct file *executable;            
+
+Executable is the executable of the file that was loaded.
+
+
+	typedef int pid_t;
+
+pid_t will be defined so that we can reference pid of a process when needed.
+
+
+struct lock lock_filesys;
+
+Lock_filesys is a lock that will be used for synchronization with the file system.
+
+
+struct child_process
+  {
+    pid_t pid;
+    bool exit;
+    bool wait;
+    int exit_status;
+    struct list_elem child_elem;
+    struct semaphore sema_zombi;
+  };
+
+This struct contains data for the processes that can be used to control and manage the 
+child processes.
+
+
+struct file_process
+  {
+    struct file *file;
+    int fd;
+    struct list_elem file_elem;
+  };
+
+file_process contains data for the open file that can be used track the file and to 
+help us remove later.
+
+
+>> B2: Describe how file descriptors are associated with open files.
+>> Are file descriptors unique within the entire OS or just within a
+>> single process?
+
+File Descriptors are identifiers for open files. File Descriptors also have 
+STDIN_FILENO and STDOUT_FILENO, but system calls will never return those file 
+descriptor calls. They are generally reserved for the console and each process. As a 
+result, processes has an independent set of file descriptors.
+
+In general, different processes may have different file descriptors; as a result, we 
+kept ours different. Each new process that opened a file will get an incremented file 
+descriptor (if called) so we can reference that file when needed. The max value of the 
+file descriptor is 128 as we have specified.
+
+---- ALGORITHMS ----
+
+>> B3: Describe your code for reading and writing user data from the
+>> kernel.
+
+Before we can read or write user data from the kernel, we must check if the pointers, 
+address, strings, file descriptor, and buffers are valid. We can check if the pointer 
+or address is valid by calling our helper functions is_valid functions that will parse 
+the arguments. As a result, the processes will fail if none of them are valid to begin 
+with. We can stop before the system call is even called. We also need to check if the 
+virtual address is below the PHYS_BASE and that the page has been allocated otherwise 
+it will also fail. However, if it is all valid then the system calls can be called upon 
+for the needed operations. In our case a switch case is used with an argument of the 
+stack passed in. The stack contains the stack pointer that is used like an index for 
+the switch case to call the correct system call. When the system call is finished, we 
+return with the value (if any).
+
+>> B4: Suppose a system call causes a full page (4,096 bytes) of data
+>> to be copied from user space into the kernel.  What is the least
+>> and the greatest possible number of inspections of the page table
+>> (e.g. calls to pagedir_get_page()) that might result?  What about
+>> for a system call that only copies 2 bytes of data?  Is there room
+>> for improvement in these numbers, and how much?
+
+The least possible number of inspections is one and the greatest is one for the page 
+table because we only obtain a page once. When only two bytes of data are copied then 
+it is faster and no inspections actually needed. However, larger copies may require 
+more inspections. As a result, there can be improvements, but we would presumably not 
+check addresses to reduce the number of inspection time. As a result, not checking for 
+valid datas can lead to problems within the system if left unchecked for.
+
+>> B5: Briefly describe your implementation of the "wait" system call
+>> and how it interacts with process termination.
+
+In our algorithm, we first check if child is NULL or if the child wait status is true. 
+If they are NULL or waiting then return an error because they should not be and the 
+parent process needs to continue. However, we can set the waiting to be true afterwards 
+since the parent process should be indicated to about waiting. The child will have an 
+exit status that we can determine if it is a zombie process or if the process needs to 
+wait for the child. Semaphores are used to indicate number of zombie processes and to 
+get the current process, to wait for the termination of the child. When the current 
+process is finished waiting, then the return value is the child's exit status which is 
+the same as the pid value. We need also make sure to remove the child and free any of 
+its resources at the end. In this case, we did with our helper function called 
+remove_child_proc function.
+
+>> B6: Any access to user program memory at a user-specified address
+>> can fail due to a bad pointer value.  Such accesses must cause the
+>> process to be terminated.  System calls are fraught with such
+>> accesses, e.g. a "write" system call requires reading the system
+>> call number from the user stack, then each of the call's three
+>> arguments, then an arbitrary amount of user memory, and any of
+>> these can fail at any point.  This poses a design and
+>> error-handling problem: how do you best avoid obscuring the primary
+>> function of code in a morass of error-handling?  Furthermore, when
+>> an error is detected, how do you ensure that all temporarily
+>> allocated resources (locks, buffers, etc.) are freed?  In a few
+>> paragraphs, describe the strategy or strategies you adopted for
+>> managing these issues.  Give an example.
+
+There are many strategies to use; however, in our algorithm we managed each error-
+handling as it would come and removal when needed. Basically, for every creation, we 
+immediately check for failure, deallocate or remove and return at the end. Then we 
+would check for errors along the way where conditions are appropriate and deallocate 
+and return if needed. At the end, we would remove any and all allocated resources by 
+calling our helper function remove_child_proc and close_all_file that removes child 
+processes and closes all files. These helper functions also deallocates resources that 
+was given to them earlier. In a way, our design had a first-come-first-served approach. 
+Interestingly, reading and understanding the original base code can show certain 
+already implemented functions that be used to our advantage as well as using data 
+structures and programming techniques. 
+
+For an example, our design, emphizses on utilizing given information and resources such 
+as the base code. By reading and understanding the base code is important to see the 
+"big picture" of the program. We can also see that the documentation requires functions 
+to load and execute a process and exit when the process is finished. These are hints on 
+how to structure the algorithm and where error checking may occur.
+
+The next step is realizing that stack and addresses are needed at the beginning due to 
+argument passing. Those can be our first error checking cases because we need the stack 
+set up correctly to proceed with system calls. To be specific, we make sure we remove 
+the page from the stack if conditions like page creation and installing have failed. In 
+this case, we don't need to proceed because stack will fail if we had passed it 
+throughout the program. We also need to allocate resources when data is created; 
+however, we can also do an error check after creation due to creation failure and 
+return.
+
+The system calls are managed by a switch case in the syscall_handler function; as a 
+result, each switch case contains information on handling specific system calls (based 
+on system call number on the stack). In some system calls, they rely making sure the 
+string is valid by checking every byte and if the buffer is valid. Sys_exec, sys_create, 
+sys_remove, and sys_open rely on making sure the string is valid. Sys_read and 
+sys_write requires a valid buffer otherwise read and write will fail. When the program 
+is finished, then we would need to remove child processes from our list and free any 
+resources because we don't need them anymore. We may have forgotten to free buffers or 
+locks, but did free pages and removed all open files at the end. As a result, the last 
+operation to do would be to free and deallocate resources for stack, buffer, and any 
+other remaining data structures. We kept track of several lists and by using those 
+lists we can remove and deallocate when iterating through them until all lists are 
+empty. As a result, we can ensure that all allocated materials are deallocated when the 
+program is done.
+
+
+
+---- SYNCHRONIZATION ----
+
+>> B7: The "exec" system call returns -1 if loading the new executable
+>> fails, so it cannot return before the new executable has completed
+>> loading.  How does your code ensure this?  How is the load
+>> success/failure status passed back to the thread that calls "exec"?
+
+In our design, we had a semaphore called sema_load in the child's data. The struct 
+contains information for the child processes. As a result, we can utilize data within 
+the child like a global variable. The semaphores will allow us to block and unblock 
+where we need to. This semaphore, sema_load, will force a thread to wait because it was 
+originally initialized with zero. The thread will wake up when the child has loaded 
+something. However, we conditionally check if the load was actually successful and 
+return with TID_ERROR on failure. The sema_load is up when the load finishes in 
+start_process function. On failure, we also need to deallocate resources as needed and 
+return. It is actually tedious to pass all of our checks, but failing a case is easy 
+for a thread; as a result, good threads can only pass our checks. Our primary goal was 
+to prevent race condition between load and execution. In our design, we focused on load 
+first, then check, and finally execute, but remembering to deallocate and free 
+resources where required.
+
+
+>> B8: Consider parent process P with child process C.  How do you
+>> ensure proper synchronization and avoid race conditions when P
+>> calls wait(C) before C exits?  After C exits?  How do you ensure
+>> that all resources are freed in each case?  How about when P
+>> terminates without waiting, before C exits?  After C exits?  Are
+>> there any special cases?
+
+
+We can prevent race conditions by using semaphores or locks and data variables within 
+the process. In our design, we used semaphores to force a process to wait. In this case, 
+we can sema_down the process P to wait for child to exit. However, when P wakes up or 
+about to wake up, we can check the status of the child whether or not that child has 
+exited already or has failed. As a result, the status is noted and we can returned to 
+the parent process upon sema_up. Whether child C exits before or after is already 
+handled through this method.
+
+We can ensure resources are free at every failure case by calling remove_child_proc 
+helper function at every failure case or upon exiting. This helper function will remove 
+the child process from our list and deallocates resources. We can also iterate through 
+our list to make sure our child list is empty; as a result, if the child list is empty, 
+then all resources of the childs have been deallocated.
+
+Pintos is one thread per process so when P terminates after C exits doesn't affect the 
+program severely since Parent process just has no children now. In a case that P 
+terminates before C exits, then C becomes an orphan and our data can't be passed to a 
+parent. C does not get adopted by another processes so C continues until it fails or 
+exits. However in either case, since the proceses are exited on termination, the exit 
+function will call for deallocation and removal from our list for processes. There can 
+be special cases, but that would defeat the purpose of synchronization because by 
+allowing synchronization we can proceedingly call to free resources as needed and 
+maintain some ordering of scheduling.
+
+
+---- RATIONALE ----
+
+>> B9: What advantages or disadvantages can you see to your design
+>> for file descriptors?
+
+The advantage to our design for file descriptors is that we know they are all 
+initialized differently for each process. As a result, they can be used as an index to 
+find certain files or to close them if needed. If all of the file descriptors were 
+identical then further checks would be needed to find the correct one.
+
+A disadvantage to our design would be maximum file descriptor value. Our design only 
+supports for 128 values as the max. As a result, for an infinite amount of files being 
+open, eventually, our design will fail because our stack could overflow and data can't 
+be stored beyond 128 array bound. As a result, we could potentially read NULL and get a 
+page fault.
+
+
+>> B10: The default tid_t to pid_t mapping is the identity mapping.
+>> If you changed it, what advantages are there to your approach?
+
+We used the default mapping between tid_t and pid_t. In other words, we set pid to be 
+the same as the tid because pintos supports only one process and one thread per process 
+at a time. When assuming pid and tid are identical, then we can treat the thread like a 
+child process. As a result, our advantage is that we can have one less data to keep 
+track of (tid's) and we're able to do operations with threads like any other process.
+
+
+
+
+
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future semesters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the semester.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+It was tedious to figure out how to put things together.
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+System calls were fun to implement and manage.
+
+>> Is there some particular fact or hint we should give students in
+>> future semesters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+None.
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future semesters or the remaining projects?
+
+Most of the TA's are in the 3rd floor GDC labs. We need more TA's in the 1st floor GDC 
+labs.
+
+>> Any other comments?
+
+We want more office hours.

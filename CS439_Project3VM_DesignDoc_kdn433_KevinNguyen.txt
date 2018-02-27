@@ -1,0 +1,397 @@
+                    +---------------------------+
+                    |           CS 439          |
+	 	    | PROJECT 3: VIRTUAL MEMORY	|
+		    |	   DESIGN DOCUMENT	|
+   		    +---------------------------+
+
+
+****EACH student submits a (unique) design document.****
+
+---- Name ----
+
+>> Fill your name, UT EID, CS login, email address, and unique number:
+
+Name: Kevin Nguyen
+EID: kdn433
+CS login: kxnguyen
+Email: kxnguyen60@gmail.com
+Unique Number: 51075
+
+
+Slip days used on this project: 1
+
+---- GROUP ----
+
+>> Fill the names, UT EIDs, CS logins, email addresses, and unique numbers
+>> of your group members.  Also fill in each person's ranking on the 
+>> partner evaluation scale, as determined by you.
+
+Name1: Sangwon Lee
+EID1: sl34645
+CS login: bearbox
+Email: fhqksl@hotmail.com
+Unique Number: 51100
+Ranking (scale below): EXCELLENT
+
+Name2:
+EID2:
+CS login:
+Email:
+Unique Number:
+Ranking (scale below):
+
+Name3:
+EID2:
+CS login:
+Email:
+Unique Number:
+Ranking (scale below):
+
+
+---- PARTNER EVALUATION SCALE ----
+
+>> Excellent: Consistently went above and beyond - tutored others, carried
+>> more than his/her fair share of the load.
+
+>> Very Good: Consistently did what he/she was supposed to do, very well
+>> prepared and cooperative.
+
+>> Satisfactory: Usually did what he/she was supposed to do, minimally
+>> prepared and cooperative.
+
+>> Marginal: Sometimes failed to show up and/or rarely prepared.
+
+>> Deficient: Often failed to show up and/or rarely prepared.
+
+>> Unsatisfactory: Consistently failed to show up and/or unprepared.
+
+>> Superficial: Practically no participation.
+
+>> No Show: No participation at all.
+
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+			PAGE TABLE MANAGEMENT
+			=====================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+"struct spage_entry 
+  {
+    void *user_vaddr;
+    bool write_bit;
+    bool load_bit;
+    bool pin_bit;
+    uint8_t type;
+    size_t offset;    
+    size_t read_bytes;
+    size_t zero_bytes;
+    size_t swap_index;
+    struct file *file;
+    struct hash_elem elem;
+  };"
+
+Supplemental page table entry holds data for swapping, allocating, and loading properly.
+
+
+"struct list frame_table;"
+
+Frame_table is a list of frame entries (altogether is Frame Table) that holds a data that map to pages. Frame Table is our physical memory.
+
+
+"struct lock frame_lock;"
+
+Frame lock to lock frames to avoid race conditions between frames, processes, and pages on termination.
+
+
+"struct spage_entry *get_spage_entry (void *user_vaddr);"										
+
+Spage_entry will get an entry from the page table so our work is only within that chosen page.
+
+
+
+---- ALGORITHMS ----
+
+>> A2: In a few paragraphs, describe your code for locating the frame,
+>> if any, that contains the data of a given page.
+
+When our frame table is initialized, the frame table is a list. Each entry in
+the frame table is an element of the list. An element holds some data and in this case,
+we hold data for the page table entry. In virtual memory, there is some kind of mapping
+between a virtual to physical. The page table represents the virtual and the frame table
+represents the physical memory. As a result, locating a frame will also yield corresponding
+page entry (or entries if sharing).
+
+In our design, we can declare a struct list for our frame table. The List.c provides
+basic list functions that we can also use to help search and find our frame. By using a
+while loop and moving between nodes in the list with next(), we can sequentially check until we find a
+frame with the needed page via if-conditional. This algorithm can also apply backwards where
+our results can also let us know that we have found the frame we are looking for. In a way,
+it is similar to finding a node in a linked list.
+
+However, we also do checks to ensure that the frame table exists in order to iterate through.
+After we declare the struct list for the frame table, we must check if the frame is exists.
+If it's not, then return with error as needed. If it does exist then just iterate through with
+our list functions to find our frame and page entries.
+
+
+>> A3: How does your code coordinate accessed and dirty bits between
+>> kernel and user virtual addresses that are aliases for the same
+>> frame, or alternatively how do you avoid the issue?
+
+In our design, we avoided the issue of aliasing because each process has its own
+page table. As a result, we used the same concept and had each page entry map to its own
+frame entry. Our page table is local to the process, but our frame table is like a global
+data structure. As a result, our frame table entry has a distinct mapping between page entries
+so multiple pages are unlikely to reference the same frame. Our dirty and accessed bits are
+only used for swapping or evicting frames. If a frame has its dirty bit modified then swap or
+eviction is eligible and likewise, if a frame has been accessed recently, don't proceed with swap
+or eviction. We consider accessed and dirty bits to be checks for our algorithm before we proceed.
+
+
+---- SYNCHRONIZATION ----
+
+>> A4: When two user processes both need a new frame at the same time,
+>> how are races avoided?
+
+Races are avoided by synchronization with locks or semaphores. In our case, we lock 
+the function that allocates for the frame table. When one process is allocating
+a new frame, the next process must wait until the lock can be acquired. Eventually,
+the next process will get the lock and allocate a new frame that the process needs. This design
+is also more easily achievable with semaphores because semaphores have explicit resources.
+
+
+---- RATIONALE ----
+
+>> A5: Why did you choose the data structure(s) that you did for
+>> representing virtual memory-to-physical memory mappings?
+
+For our page table we used a hash table because we wanted to make a direct mapping
+of the page number and the frame number. As a result, we can easily search the hash
+table to find a value (from our key) which is the frame number that corresponds
+to the frame table entry.
+
+Our physical memory, the frame table, is a linked list structure. It's a basic structure
+because frames can be anywhere in physical memory. As a result, we iterate through
+and check each frame like any other linked list.
+
+
+		       PAGING TO AND FROM DISK
+		       =======================
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+"struct lock slock;"				
+
+Slock (Swap Lock) is a lock to avoid race conditions between the processes and the swapping activities.
+
+
+"struct block *sblock;"
+
+Sblock (Swap Block) is the swap block that will have the block to swap into and out of.
+
+
+"struct bitmap *sblock_map;"
+
+Sblock_map (Swap Block Map) is a block mapping of bits to keep track of available space for swapping.
+
+
+
+---- ALGORITHMS ----
+
+>> B2: When a frame is required but none are free, some frame must be
+>> evicted.  Describe your code for choosing a frame to evict.
+
+In our design, we used the concept of the clock replacement policy. The
+clock replacement policy evicts a page that hasn't been recently accessed.
+As a result, we can use a pagedir.c function if a page has been accessed recently.
+
+We iterate through the our frame table (a list) and check if that frame (that
+corresponds to a page) has been accessed recently with pagedir_is_accessed().
+When iterating through we must also set any recently accessed to false because
+they haven't been recently accessed. We don't evict those pages yet so we keep iterating.
+To keep our iterations continuous, we use a while loop and keep iterating until
+at the end of our list. When at the end of the frame list, we set the pointer back
+to the beginning of the frame list and iterate through again. However, this time, 
+the difference is that the accessed values of each frame could be different on the
+second round trip and so forth. After iterating through again, we may find a frame
+that has not been recently accessed. If so, then evict and clear that frame away; however,
+if not, then we must repeat the same routine by iterating, checking accessed status
+and setting accessed the status if recently accessed (else evict as needed).
+
+
+>> B3: When a process P obtains a frame that was previously used by a
+>> process Q, how do you adjust the page table (and any other data
+>> structures) to reflect that Q no longer has the frame?
+
+In our design algorithm, after eviction and allocation, we remove and free 
+the frame that is no longer being used by a particular process. As a result, 
+there shouldn't be any traces of old frames still existing in the frame table. 
+We can allocate a new frame for another process and that frame is linked to 
+the thread and the page entry for that new process. Process Q should have its 
+own page table and distinct frame entries. We use the idea of deallocate and reallocate
+frames to avoid aliasing as well. 
+
+
+>> B4: Explain your heuristic for deciding whether or not  page fault 
+>> for an invalid virtual address should cause the stack to be extended.
+
+The tricky part was to figure out if an access is a stack access. As a result,
+if the page entry is not in the page table or below the PHYS_BASE, the esp (stack
+pointer) could be attempting to do a stack access.
+
+We can use PUSHA to push 32 byes below the stack pointer. That way, we can turn
+invalid accesses to valid accesses. The stack pointer, esp, should always be
+legal accesses; invalid accesses can cause the program to page fault or terminate.
+
+
+---- SYNCHRONIZATION ----
+
+>> B5: Explain the basics of your VM synchronization design.  In
+>> particular, explain how it prevents deadlock.  (Refer to the
+>> textbook for an explanation of the necessary conditions for
+>> deadlock.)
+
+In our design for VM, we must consider that there are activities
+between processes and between frames and pages. We use the pin bit 
+to help our synchronization with general usage of locks or semaphores.
+The pin bit helps avoid eviction since our eviction algorithm also ignores
+entries with pin bit set to true. However, when the kernel is done accessing
+that frame, the pin bit is set back to false. As a result, that entry could be 
+eligible for eviction on the next pass.
+
+
+>> B6: A page fault in process P can cause another process Q's frame
+>> to be evicted.  How do you ensure that Q cannot access or modify
+>> the page during the eviction process?  How do you avoid a race
+>> between P evicting Q's frame and Q faulting the page back in?
+
+We take advantage of the pin bit that will signify that frame is being
+modified. Process Q has its frame to work with; however, Process P
+needs to do work with the frame table. The pin bit is set to true since 
+Process Q is modifying that frame; as a result, our eviction algorithm,
+would ignore frames with pin_bit set to true (pin bit will eventually be
+set to false). Process P can't evict Process Q's frames in this layout. 
+When Process P is trying to evict a frame, the load bit is set to false,
+so process Q must reload that page so the page can be faulted back in.
+The goal is to avoid race conditions between Processes P and Q.
+
+
+>> B7: Suppose a page fault in process P causes a page to be read from
+>> the file system or swap.  How do you ensure that a second process Q
+>> cannot interfere by e.g. attempting to evict the frame while it is
+>> still being read in?
+
+The pin bit is set during Process P's operations with the frame. As a result,
+Process Q should ignore any pin bit frame that is true in the eviction algorithm.
+We want to avoid page faulting as much as possible, but when a fault occurs
+we have to load a page in to avoid the next access to fault. This occurs if an
+eviction actually happens and there isn't a corresponding frame that is being called
+at the same time with an eviction activity.
+
+
+>> B8: Explain how you handle access to paged-out pages that occur
+>> during system calls.  Do you use page faults to bring in pages (as
+>> in user programs), or do you have a mechanism for "locking" frames
+>> into physical memory, or do you use some other design?  How do you
+>> gracefully handle attempted accesses to invalid virtual addresses?
+
+We load in pages that are needed to be loaded in. Our design, utilizes locks,
+semaphores, and pin bits to ensure that frames aren't evicted, allocated, or removed
+prematurely. Our eviction algorithm, goes through a series of checks before the actual 
+eviction activity occurs.
+
+For invalid virtual addresses that process is terminated and any related resources
+are removed from the tables and deallocated. Likewise, any page or frame that is removed
+is also deleted from the data structure's entries (or nodes) and deallocated to prevent
+excessive memory leaks.
+
+
+---- RATIONALE ----
+
+>> B9: A single lock for the whole VM system would make
+>> synchronization easy, but limit parallelism.  On the other hand,
+>> using many locks complicates synchronization and raises the
+>> possibility for deadlock but allows for high parallelism.  Explain
+>> where your design falls along this continuum and why you chose to
+>> design it this way.
+
+In our design, We use global locks and boolean values for our VM system implementation because it 
+made synchronization easy to keep track of and each process executes almost sequentially. 
+However, processes executing in parallel will have poor performance. We chose this design 
+because keeping track of many distinct locks can be confusing and deadlocking can be likely 
+to occur. We wanted to use a simplistic approach to achieve the best efficiency as much as 
+possible without using many specific locks or semaphores.
+
+
+
+
+
+
+		 MEMORY MAPPED FILES (Extra Credit)
+		 ==================================
+
+---- DATA STRUCTURES ----
+
+>> C1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+---- ALGORITHMS ----
+
+>> C2: Describe how memory mapped files integrate into your virtual
+>> memory subsystem.  Explain how the page fault and eviction
+>> processes differ between swap pages and other pages.
+
+>> C3: Explain how you determine whether a new file mapping overlaps
+>> any existing segment.
+
+---- RATIONALE ----
+
+>> C4: Mappings created with "mmap" have similar semantics to those of
+>> data demand-paged from executables, except that "mmap" mappings are
+>> written back to their original files, not to swap.  This implies
+>> that much of their implementation can be shared.  Explain why your
+>> implementation either does or does not share much of the code for
+>> the two situations.
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future quarters or the remaining projects?
+
+>> Any other comments?
+

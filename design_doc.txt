@@ -1,0 +1,129 @@
+################
+YOUR INFO
+################
+Name1: Kevin Nguyen
+EID1: kdn433
+CS login: kxnguyen
+Email: kxnguyen60@utexas.edu
+Unique Number: 51075
+
+Slip days used: 0
+
+****EACH student submits a (unique) design document.****
+
+################
+YOUR PARTNER'S INFO
+################
+Name2: Sangwon Lee
+EID2: sl34645
+CS login: bearbox
+Email: fhqksl@hotmail.com	
+Unique Number: 51100
+
+Your partner's ranking (scale below): Excellent
+
+################
+PARTNER EVALUATION SCALE
+################
+Excellent: Consistently went above and beyond - tutored others, carried
+more than his/her fair share of the load.
+
+Very Good: Consistently did what he/she was supposed to do, very well
+prepared and cooperative.
+
+Satisfactory: Usually did what he/she was supposed to do, minimally
+prepared and cooperative.
+
+Marginal: Sometimes failed to show up and/or rarely prepared.
+
+Deficient: Often failed to show up and/or rarely prepared.
+
+Unsatisfactory: Consistently failed to show up and/or unprepared.
+
+Superficial: Practically no participation.
+
+No Show: No participation at all.
+
+################
+Preliminaries
+################
+(1) If you have any preliminary comments on your submission, notes for
+  the TAs, or extra credit, please give them here.
+
+(2) Please cite any offline or online sources you consulted while
+  preparing your submission, other than the Linux documentation,
+  course text, and lecture notes.
+
+
+################
+Questions regarding Part 0
+################
+(1) How many child processes are created when doFib() begins with
+  an input of 5?  Show the return value for each child process, numbering
+  the processes beginning with 0 (the original process) and incrementing for
+  each child process.
+
+There should be a total of 14 child processes created. We are ignoring the initial
+process because that is not a "created" process. Each child should have a return value.
+
+Processes 0 - 0
+Processes 1 - 5
+Processes 2 - 3
+Processes 3 - 2
+Processes 4 - 1
+Processes 5 - 1
+Processes 6 - 2
+Processes 7 - 1
+Processes 8 - 1
+Processes 9 - 1
+Processes 10 - 3
+Processes 11 - 2
+Processes 12 - 1
+Processes 13 - 1
+Processes 14 - 1
+
+(2) In part 0.3, which flavor of exec did you choose to use?  Why?
+
+For exec, we chose execve because execvp has two additional options 'v' and 'e.'
+The 'v' command can let us take an array of pointers as the argument similar to command line arguments with argv[n]. We also want to use 'v' to maintain coding
+style continuity where the argument pointers are from an array of pointers. In fact, throughout the program, there are algorithms that uses argument pointers. The 'e'
+command enables the ability to set the child processes' environment. Otherwise, the child process will inherit the parent's settings.
+As a result, we can have more control of the child process creation.
+
+################
+Questions regarding Part 1
+################
+(1) In the provided utility function Signal(), what does the call to
+  sigaction() do?  Why was sigaction() used instead of signal()?
+
+Sigaction() function does blocking until signal handler returns. However, Signal() may or may not block other signals from getting to the signal handler. 
+As a result, Sigaction() function is preferred because we can make sure that no other signals are being handled. Signals are 
+handled one at a time.
+
+(2) What is the last assembly language instruction executed by the
+  signal handler function that you write?  (You may choose either signal
+  handler.)
+
+ 0x0000000000400a0d <+59>:	mov    $0x1,%edi
+
+(3) After the instruction identified in the previous question executes, dis
+  what is the next assembly language instruction executed?
+
+ 0x0000000000400800 <+0>:	jmpq   *0x201872(%rip)
+
+(4) When the signal handler finishes running, it must restore all of
+  the registers from the interrupted thread to exactly their values
+  before the signal occurred. How is this done?
+
+When the handler finishes running, the data is popped off the stack on returning to main instructions. As a result, original values are restored for the current main invocation.
+
+################
+Questions regarding Part 2
+################q
+
+(1) In msh.c, we use three separate signal handlers to catch our signals. 
+  You can also use a single signal handler to catch all three signals.  Is
+  there a design advantage of one over the other?  Explain your answer.
+
+There is a design advantage by using three separate signals. The design advantage for three separate signals are readability and isolation. When there are three handlers that each do a specific task, it enables easier way to detect bugs in the code. And we would know which code should and should not be running. If we had a signal handler that handled all three signals, that function would be large and convoluted. As a result, debugging or reading the algorithm can be a tedious task.
+

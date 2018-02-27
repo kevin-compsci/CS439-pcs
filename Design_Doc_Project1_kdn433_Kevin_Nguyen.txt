@@ -1,0 +1,373 @@
+			+--------------------+
+			|        CS 439      |
+			| PROJECT 1: THREADS |
+			|   DESIGN DOCUMENT  |
+			+--------------------+
+
+****EACH student submits a (unique) design document.****
+
+---- Name ----
+
+>> Fill your name, UT EID, CS login, email address, and unique number:
+
+Name: Kevin Nguyen
+EID: kdn433
+CS login: kxnguyen
+Email: kxnguyen60@gmail.com
+Unique Number: 51075
+
+
+Slip days used on this project: 0
+
+---- GROUP ----
+
+>> Fill the names, UT EIDs, CS logins, email addresses, and unique numbers
+>> of your group members.  Also fill in each person's ranking on the 
+>> partner evaluation scale, as determined by you.
+
+Name1: Sangwon Lee
+EID1: sl34645
+CS Login: bearbox
+Email: fhqksl@hotmail.com
+Unique Number: 51100
+Ranking (scale below): Excellent
+
+Name2: Kevin Nguyen
+EID2: kdn433
+CS login: kxnguyen
+Email: kxnguyen60@gmail.com
+Unique Number: 51075
+Ranking (scale below): Very Good
+
+Name3:
+EID2:
+CS login:
+Email:
+Unique Number:
+Ranking (scale below):
+
+
+---- PARTNER EVALUATION SCALE ----
+
+>> Excellent: Consistently went above and beyond - tutored others, carried
+>> more than his/her fair share of the load.
+
+>> Very Good: Consistently did what he/she was supposed to do, very well
+>> prepared and cooperative.
+
+>> Satisfactory: Usually did what he/she was supposed to do, minimally
+>> prepared and cooperative.
+
+>> Marginal: Sometimes failed to show up and/or rarely prepared.
+
+>> Deficient: Often failed to show up and/or rarely prepared.
+
+>> Unsatisfactory: Consistently failed to show up and/or unprepared.
+
+>> Superficial: Practically no participation.
+
+>> No Show: No participation at all.
+
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+
+
+			     ALARM CLOCK
+			     ===========
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+"int64_t timeChecker;"
+
+This declaration timeChecker is a variable for the "target time" for threads to wake up, when the correct amount of time has elapsed.
+	
+"struct semaphore sema_p;"
+
+This declaration sema_p is a semaphore priority and we want to put threads in our list with target values.
+		
+"struct list_elem timer_elem;"
+
+This declaration timer_elem is for acquiring the element from the list (data type differences) so it can be readable for further needed operations.
+
+
+---- ALGORITHMS ----
+
+>> A2: Briefly describe what happens in a call to timer_sleep(),
+>> including the effects of the timer interrupt handler.
+
+When a call to timer_sleep() occurs, the thread is put to sleep by the semaphore with the sema_down. The thread is now waiting until the correct amount of time has been elapsed before it can be allowed to wake up. The timer interrupt handler will periodically count the ticks and wake up any threads that can actually wake up. Basically, this interrupt wakes a thread up because it was sleeping.
+
+>> A3: What steps are taken to minimize the amount of time spent in
+>> the timer interrupt handler?
+
+We can put the sleeping threads in order from lowest target time to highest target time. As a result, we can focus on the shortest time sleeping threads first because they can wake up faster. However, we can also implement based on which thread has the higher priority to wake up first. As a result, we can remove the top of the list every time we finish waking up a thread. The last item in the list should be the thread with the lowest priority or longest target time to wake up. The interrupt handler should be able to quickly wake up threads in that particular style instead of needlessly waiting for the elapsed time to occur.
+
+
+---- SYNCHRONIZATION ----
+
+>> A4: How are race conditions avoided when multiple threads call
+>> timer_sleep() simultaneously?
+
+Race conditions are avoided because we temporarily disable interrupts. When we disable interrupts we can acquire locks and set the target time (time elapsed) for that thread. We can then set interrupts after putting it to sleep. As a result, only one thread at a time can be put to sleep with their own target time. This design will also not set the wrong target time for multiple threads.
+
+>> A5: How are race conditions avoided when a timer interrupt occurs
+>> during a call to timer_sleep()?
+
+Race conditions are avoided because we can disable interrupts. When we disable interrupts the thread that is being processed won't get interrupted by any interrupt handlers. As a result, the threads can have their target time set without being interrupted or having another thread stealing the target time. In general, we can prevent race conditions by maintaining order (if possible) of execution.
+
+
+---- RATIONALE ----
+
+>> A6: Why did you choose this design?  In what ways is it superior to
+>> another design you considered?
+
+We chose the current design and algorithm because it is efficient and ensures that threads are woken up as needed. The design is meant to take advantage of ordering and manipulation of the interrupts to achieve the correct results. We wanted to ensure that the algorithm remained simple, but can achieve the best results as intended. We did have another design, but we did not use any interrupts or a list. We wanted to use a list because some threads needed to woken up in particular order. As a result, we originally just woke up threads as they get called. However, that design was heavily flawed because incorrect threads are being woken up and test cases were failing.
+
+
+
+			 PRIORITY SCHEDULING
+			 ===================
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+"int original_priority;"
+
+This declaration is to store the original priority of a thread because a thread may have its priority changed multiple times.
+		
+"struct donor donor;"
+
+This declaration donor is a struct for maintaining a list of donors so we can keep track of waiting threads and priority values.
+	
+"struct lock *try_lock;"
+
+This declaration try_lock will test if a particular thread has a lock because sometimes an original low priority thread may have their lock released early.
+		
+"struct list_elem donor_elem;"
+
+This declaration donor_elem will be a list of priority values that were donated to so we can restore, set, or use these priorities as needed.
+
+>> B2: Explain the data structure used to track priority donation.
+>> Use ASCII art, a diagram, or a drawing to illustrate a nested 
+>> donation.  (You may submit an additional file of type .png or .pdf
+>> for this problem.)
+
+
+Assuming we are using our design and our data structure for this explanation...
+
+Legend:
+Big Box = thread
+* = holding a lock
+o = released a lock
+-> = waiting on...
+=-> = try and acquire lock
+[] = sub-list
+
+
+Part 1:
+_____________    _____________      _____________
+|Thread1: 45|    |Thread2: 33|* ->  |Thread3: 31|*
+|___________|    |___________|      |___________|    
+
+
+Thread2 needs to execute but it is waiting for Thread31 to execute and release the lock. However, donation is needed because Thread3 is the lowest priority. In our design, our list will donate the priorities down the line and keep track of stored priority values.
+
+
+Part 2: 
+_____________    _____________      _____________
+|Thread1: 45|    |Thread2: 45|* ->  |Thread3: 31|*
+|           |    |origin: 33 |      |           |    
+|___________|    |___________|      |___________|
+
+
+Thread2 gets a higher priority, but Thread3 still needs a donation. Thread2 has the highest priority value so it should donate that value to Thread3 too.
+
+
+Part 3: 
+_____________    _______________      _______________
+|Thread1: 45|    |Thread2: 45  |* =-> |Thread3: 45  |*
+|           |    |origin: 33   |      |origin: 31   |    
+|           |    |[Thread1]    |      |[Thread2]    |
+|___________|    |_____________|      |_____________| 
+
+Thread3 finally has the highest priority value and can execute. When finished, the lock can be released and Thread2 can begin. However, we want to restore Thread3's priority value because we want our scheduler to execute the next highest. Thread2 can try to acquire Thread3's lock, but try_lock fails since Thread3 is not done.
+
+
+Part 4: 
+_____________    _______________      _______________
+|Thread1: 45|    |Thread2: 45  |* =-> |Thread3: 31  |o
+|           |    |origin: 33   |      |origin: 31   |    
+|           |    |[Thread1]    |      |[Thread2]    |
+|___________|    |_____________|      |_____________| 
+
+Thread3 has its priority restored so it does not have the highest priority anymore. Thread2 can try and acquire a lock to double check if Thread3 has actually finished. If it is finished, then Thread2 can execute since it has the resources for execution. Thread2 is also next because our sublist (can be longer) keeps track of which thread needs to be executed first and check its priorities as needed.
+
+ 
+Part 5: 
+_____________    _______________      _______________
+|Thread1: 45|    |Thread2: 45  |o     |Thread3: 31  |o
+|           |    |origin: 33   |      |origin: 31   |    
+|           |    |[Thread1]    |      |[EMPTY]      |
+|___________|    |_____________|      |_____________| 
+
+Thread2 executes and finishes by releasing the lock. Thread2 still has a sublist for Thread1; as a result, the process isn't over yet. Thread3 has finished and Thread2 has just finished. 
+
+
+Part 6: 
+_____________    _______________      _______________
+|Thread1: 45|    |Thread2: 33  |o     |Thread3: 31  |o
+|           |    |origin: 33   |      |origin: 31   |    
+|           |    |[Thread1]    |      |[EMPTY]      |
+|___________|    |_____________|      |_____________| 
+
+Thread2 has their original priority restored so we don't execute Thread2 again (we want to avoid race conditions). The remaining highest thread is Thread1. There are no further locks and Thread1 is indicated to be the next thread to execute by our sublist. As a result, Thread1 executes and finishes normally.
+
+
+Part 7: 
+_____________    _______________      _______________
+|Thread1: 45|    |Thread2: 33  |o     |Thread3: 31  |o
+|           |    |origin: 33   |      |origin: 31   |    
+|           |    |[EMPTY]      |      |[EMPTY]      |
+|___________|    |_____________|      |_____________| 
+
+Thread1 executes and finishes and the process is complete. These threads have executed in their proper sequence without interference. However, we can notice that the sublists are empty because when we refer back to the next highest priority thread in our list we remove that data from the sublist and make it empty. We clear the sublist because we don't need to further waste data or need to perform operations on the same thread again.
+
+
+Order of execution: Thread3, Thread2, then Thread1.
+
+This method is a brief example of how we keep track of priority donation in our design and in general for priority donation. However, donation can occur anywhere; as a result, we could have more data to keep track of and to manage throughout this process.
+
+
+---- ALGORITHMS ----
+
+>> B3: How do you ensure that the highest priority thread waiting for
+>> a lock, semaphore, or condition variable wakes up first?
+
+We can ensure that the highest priority thread wakes up first by inserting it into a sorted list (list sorted again for accuracy in terms of priority). We can then pop the top of the list that has the highest priority to be woken up. The ordered list should have threads from highest to lowest priorities. By using the ordered list, we can always ensure that the highest priority wakes up. 
+
+>> B4: Describe the sequence of events when a call to lock_acquire()
+>> causes a priority donation.  How is nested donation handled?
+
+Threads may or may not have locks, but the priority scheduler is meant to execute the thread with the highest priority. The lock_acquire (gets the lock) will hold resources until that thread has finished executing. However, another thread with a higher priority may require that thread to execute; as a result, donation is needed because a lower priority thread needs a higher priority to execute. The lower thread will now get the higher priority value (that was donated to by another thread). Donation temporarily gives a higher priority value to threads that need them. Nested donation is where a series of threads that has a lock require the next thread to execute. As a result, nested donation can be handled by having a series of donations (with saved priority values of previous thread's, current, and original for accuracy) between each other. When a the highest thread has finished executing, the next highest thread (restoring the priority as needed) can execute since it is not waiting for another thread anymore and it has resources that it needs to execute. The steps is repeated again until the last thread (lowest priority) finally executes. In this event, the nested donation is finished. Our design maintains a list to keep track of donated threads, donor threads, and priorities; as a result, we can maintain accuracy when donation occurs.
+
+>> B5: Describe the sequence of events when lock_release() is called
+>> on a lock that a higher-priority thread is waiting for.
+
+ When lock_release() is called, that lock released thread should have the highest priority at the moment because it should have had a donation from a higher priority thread. Originally, the thread that used to have the lock should have had the lowest. The thread with the next highest priority can execute next because it has the next highest priority and it is not waiting (if there aren't any) for any more threads with locks. This cycle of release and execute continues until there are no more threads to execute; the last thread with the lowest priority should be the one to execute. In our design, we had a list for threads needed to be executed; as a result, we removed the thread in the list when it has finished. We also restore priorities or set priority values when we are done with the old highest priority value. This also method continues until the list is empty (no more threads) and all intended threads have executed as needed. 
+
+---- SYNCHRONIZATION ----
+
+>> B6: Describe a potential race in thread_set_priority() and explain
+>> how your implementation avoids it.  Can you use a lock to avoid
+>> this race?
+
+Thread_set_priority() function may set priorities too soon or prematurely because threads could have temporarily identical priorities. When priority values are wrong, then our program is wrong. We want to avoid race conditions because it can alter our results from our expected results. Our design avoids a race condition by checking the priority if it is different. We want the priorities to be the expected priorities for each thread. As a result, this checking occurs immediately after the priorities have been set. We can use locks to avoid race condition because we disabled interrupts for hte moment. As a result, we can acquire the lock to ensure that the thread has the needed set priority.
+
+
+---- RATIONALE ----
+
+>> B7: Why did you choose this design?  In what ways is it superior to
+>> another design you considered?
+
+We chose this design because we wanted to utilize a list (like a stack) to manage our data. Our design operated within the scope of our lists and by taking advantage of various implemented (provided) functions we can manage the program and concept of threads intuitively. There were some functions that we had to design ourselves such as the compare functions when we needed to compare priorities. The algorithm is complex, but the majority of it revolves around comparing, setting, resetting, and removing items from our lists. We originally only used a design with fewer lists, but the algorithms became long and too complex to debug. There was a lot of data to work with and we needed to keep track of various priority values of old, new, and current. As a result, we needed a new algorithm with more lists and to take advantage of provided functions in order to complete our objectives.
+
+		  ADVANCED SCHEDULER (Extra Credit)
+		  =================================
+
+---- DATA STRUCTURES ----
+
+>> C1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+---- ALGORITHMS ----
+
+>> C2: Suppose threads A, B, and C have nice values 0, 1, and 2.  Each
+>> has a recent_cpu value of 0.  Fill in the table below showing the
+>> scheduling decision and the priority and recent_cpu values for each
+>> thread after each given number of timer ticks:
+
+timer  recent_cpu    priority   thread
+ticks   A   B   C   A   B   C   to run
+-----  --  --  --  --  --  --   ------
+ 0
+ 4
+ 8
+12
+16
+20
+24
+28
+32
+36
+
+>> C3: Did any ambiguities in the scheduler specification make values
+>> in the table uncertain?  If so, what rule did you use to resolve
+>> them?  Does this match the behavior of your scheduler?
+
+>> C4: How is the way you divided the cost of scheduling between code
+>> inside and outside interrupt context likely to affect performance?
+
+---- RATIONALE ----
+
+>> C5: Briefly critique your design, pointing out advantages and
+>> disadvantages in your design choices.  If you were to have extra
+>> time to work on this part of the project, how might you choose to
+>> refine or improve your design?
+
+>> C6: The assignment explains arithmetic for fixed-point math in
+>> detail, but it leaves it open to you to implement it.  Why did you
+>> decide to implement it the way you did?  If you created an
+>> abstraction layer for fixed-point math, that is, an abstract data
+>> type and/or a set of functions or macros to manipulate fixed-point
+>> numbers, why did you do so?  If not, why not?
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future semesters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the semester.
+
+>> In your opinion, was this assignment, or any one of the two problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+This project was somewhat easy, but highly tedious. It should be noted for students to read each function provided too because they sometimes help make our implementations easier.
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+Priority Donation was interesting and implementing it gave me an idea of how threads can work.
+
+>> Is there some particular fact or hint we should give students in
+>> future semesters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+More heavy emphasis on reading the entire documentation because I think many students would rather skip reading those important details.
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future semesters or the remaining projects?
+
+TA's should hold more office hours and for longer durations, but they should spend only a few minutes with each person. Many students need the TA's help as well. Interestingly, TA's should also be more present in the 1st floor GDC labs because I rarely see them available. Most of the TA's are on the 3rd floor GDC labs.
+
+>> Any other comments?
+
+Can this project on Threads be any more difficult?
+
