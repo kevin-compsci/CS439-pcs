@@ -1,0 +1,437 @@
+00000000000i[     ] Bochs x86 Emulator 2.2.6
+00000000000i[     ]   Build from CVS snapshot on January 29, 2006
+00000000000i[     ] System configuration
+00000000000i[     ]   processors: 1
+00000000000i[     ]   A20 line support: yes
+00000000000i[     ]   APIC support: no
+00000000000i[     ] CPU configuration
+00000000000i[     ]   level: 5
+00000000000i[     ]   fpu support: yes
+00000000000i[     ]   paging support: yes, tlb enabled: yes
+00000000000i[     ]   mmx support: yes
+00000000000i[     ]   sse support: no
+00000000000i[     ]   v8086 mode support: yes
+00000000000i[     ]   VME support: yes
+00000000000i[     ]   3dnow! support: no
+00000000000i[     ]   PAE support: no
+00000000000i[     ]   PGE support: no
+00000000000i[     ]   PSE support: yes
+00000000000i[     ]   x86-64 support: no
+00000000000i[     ]   SEP support: no
+00000000000i[     ] Optimization configuration
+00000000000i[     ]   Guest2HostTLB support: no
+00000000000i[     ]   RepeatSpeedups support: no
+00000000000i[     ]   Icache support: no
+00000000000i[     ]   Host Asm support: yes
+00000000000i[     ]   Fast function calls: no
+00000000000i[     ] Devices configuration
+00000000000i[     ]   NE2000 support: no
+00000000000i[     ]   PCI support: no
+00000000000i[     ]   SB16 support: no
+00000000000i[     ]   USB support: no
+00000000000i[     ]   VGA extension support:  
+00000000000i[MEM0 ] allocated memory at 0x7fdce3a95010. after alignment, vector=0x7fdce3a96000
+00000000000i[MEM0 ] 4.00MB
+00000000000i[MEM0 ] rom at 0xffff0000/65536 ('/lusr/opt/boch-2.2.6-pintos/share/bochs/BIOS-bochs-latest')
+00000000000i[MEM0 ] rom at 0xc0000/32768 ('/lusr/opt/boch-2.2.6-pintos/share/bochs/VGABIOS-lgpl-latest')
+00000000000i[CMOS ] Using specified time for initial clock
+00000000000i[CMOS ] Setting initial clock to: Wed Dec 31 18:00:00 1969 (time0=0)
+00000000000i[DMA  ] channel 4 used by cascade
+00000000000i[DMA  ] channel 2 used by Floppy Drive
+00000000000i[XGUI ] test_alloc_colors: 16 colors available out of 16 colors tried
+00000000000i[XGUI ] font 8 wide x 16 high, display depth = 24
+00000000000i[VGA  ] interval=40000
+00000000000i[     ] init_mem of 'harddrv' plugin device by virtual method
+00000000000i[     ] init_mem of 'keyboard' plugin device by virtual method
+00000000000i[     ] init_mem of 'serial' plugin device by virtual method
+00000000000i[     ] init_mem of 'parallel' plugin device by virtual method
+00000000000i[     ] init_mem of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] init_mem of 'speaker' plugin device by virtual method
+00000000000i[     ] init_dev of 'harddrv' plugin device by virtual method
+00000000000i[HD   ] HD on ata0-0: '/tmp/5P1Rraevet.dsk' 'flat' mode 
+00000000000i[HD   ] Using boot sequence disk, none, none
+00000000000i[HD   ] Floppy boot signature check is enabled
+00000000000i[     ] init_dev of 'keyboard' plugin device by virtual method
+00000000000i[KBD  ] will paste characters every 1000 keyboard ticks
+00000000000i[     ] init_dev of 'serial' plugin device by virtual method
+00000000000i[SER  ] com1 at 0x03f8 irq 4
+00000000000i[     ] init_dev of 'parallel' plugin device by virtual method
+00000000000i[PAR  ] parallel port 1 at 0x0378 irq 7
+00000000000i[     ] init_dev of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] init_dev of 'speaker' plugin device by virtual method
+00000000000i[SPEAK] Failed to open /dev/console: Resource temporarily unavailable
+00000000000i[SPEAK] Deactivating beep on console
+00000000000i[     ] reset of 'harddrv' plugin device by virtual method
+00000000000i[     ] reset of 'keyboard' plugin device by virtual method
+00000000000i[     ] reset of 'serial' plugin device by virtual method
+00000000000i[     ] reset of 'parallel' plugin device by virtual method
+00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] reset of 'speaker' plugin device by virtual method
+00000000000i[     ] addr fff0 len 1
+00000000000i[     ] addr fff0 len 1
+00000000000i[     ] addr ffc0 len 40
+00000000000i[     ] addr fff0 len 8
+00000000000i[     ] addr fff0 len 7
+00000000000i[     ] addr c0022d00 len 40
+00000000000i[     ] addr c0022d40 len 40
+00000000000i[     ] addr c0022de3 len 1
+00000000000i[     ] setting breakpoint at c0022de3
+00000003740i[BIOS ] $Revision: 1.160 $ $Date: 2006/01/25 17:51:49 $
+00000040000e[VGA  ] character height = 1, skipping text update
+00000080000e[VGA  ] character height = 1, skipping text update
+00000120000e[VGA  ] character height = 1, skipping text update
+00000160000e[VGA  ] character height = 1, skipping text update
+00000200000e[VGA  ] character height = 1, skipping text update
+00000240000e[VGA  ] character height = 1, skipping text update
+00000280000e[VGA  ] character height = 1, skipping text update
+00000317563i[KBD  ] reset-disable command received
+00000320000e[VGA  ] character height = 1, skipping text update
+00000360000e[VGA  ] character height = 1, skipping text update
+00000400000e[VGA  ] character height = 1, skipping text update
+00000425250i[VBIOS] VGABios $Id: vgabios.c,v 1.63 2005/12/26 19:50:26 vruppert Exp $
+00000428257i[VBIOS] VBE Bios $Id: vbe.c,v 1.48 2005/12/26 19:50:26 vruppert Exp $
+00000440000e[VGA  ] character height = 1, skipping text update
+00000480000i[XGUI ] charmap update. Font Height is 16
+00000520000i[XGUI ] charmap update. Font Height is 16
+00000737822i[BIOS ] ata0-0: PCHS=1/16/63 translation=none LCHS=1/16/63
+00000786523e[HD   ] ata0: device set to 1 which does not exist
+00000786815e[HD   ] ata1: device set to 0 which does not exist
+00000787108e[HD   ] ata1: device set to 1 which does not exist
+00001136151i[     ] found breakpoint at c0022de3
+00001136151i[     ] stopped with ac1
+00001136151i[     ] reg 8 set to c0022de3
+00001136151i[     ] reg 41 set to ffffffff
+00001136151i[     ] addr c0022de3 len 1
+00001136151i[     ] Removing breakpoint at c0022de3
+00001136151i[     ] addr c000ef40 len 40
+00001136151i[     ] stepping
+00001136152i[     ] stopped with ac2
+00001136152i[     ] addr c002092a len 1
+00001136152i[     ] addr c000ef00 len 40
+00001136152i[     ] setting breakpoint at c0022de3
+00001136152i[     ] setting breakpoint at c0022de8
+00001136185i[     ] found breakpoint at c0022de8
+00001136185i[     ] stopped with ac1
+00001136185i[     ] reg 8 set to c0022de8
+00001136185i[     ] reg 41 set to ffffffff
+00001136185i[     ] addr c0022de8 len 1
+00001136185i[     ] Removing breakpoint at c0022de8
+00001136185i[     ] stepping
+00001136186i[     ] stopped with ac2
+00001136186i[     ] addr c0022dea len 1
+00001136186i[     ] Removing breakpoint at c0022de3
+00001136186i[     ] setting breakpoint at c0022de3
+00001136186i[     ] stepping
+00001136187i[     ] stopped with ac2
+00001136187i[     ] addr c0022ded len 1
+00001136187i[     ] stepping
+00001136188i[     ] stopped with ac2
+00001136188i[     ] addr c0022e1b len 1
+00001136188i[     ] Removing breakpoint at c0022de3
+00001136188i[     ] setting breakpoint at c0022de3
+00001136922i[     ] found breakpoint at c0022de3
+00001136922i[     ] stopped with ac1
+00001136922i[     ] reg 8 set to c0022de3
+00001136922i[     ] reg 41 set to ffffffff
+00001136922i[     ] addr c0022de3 len 1
+00001136922i[     ] Removing breakpoint at c0022de3
+00001136922i[     ] addr c000ef00 len 40
+00001136922i[     ] stepping
+00001136923i[     ] stopped with ac2
+00001136923i[     ] addr c002092a len 1
+00001136923i[     ] setting breakpoint at c0022de3
+00001166344i[     ] found breakpoint at c0022de3
+00001166344i[     ] stopped with ac1
+00001166344i[     ] reg 8 set to c0022de3
+00001166344i[     ] reg 41 set to ffffffff
+00001166344i[     ] addr c0022de3 len 1
+00001166344i[     ] Removing breakpoint at c0022de3
+00001166344i[     ] addr c000eec0 len 40
+00001166344i[     ] stepping
+00001166345i[     ] stopped with ac2
+00001166345i[     ] addr c002092a len 1
+00001166345i[     ] setting breakpoint at c0022de3
+00001212675i[     ] found breakpoint at c0022de3
+00001212675i[     ] stopped with ac1
+00001212675i[     ] reg 8 set to c0022de3
+00001212675i[     ] reg 41 set to ffffffff
+00001212675i[     ] addr c0022de3 len 1
+00001212675i[     ] Removing breakpoint at c0022de3
+00001212675i[     ] addr c000eec0 len 40
+00001212675i[     ] stepping
+00001212676i[     ] stopped with ac2
+00001212676i[     ] addr c002092a len 1
+00001212676i[     ] setting breakpoint at c0022de3
+00001257790i[     ] found breakpoint at c0022de3
+00001257790i[     ] stopped with ac1
+00001257790i[     ] reg 8 set to c0022de3
+00001257790i[     ] reg 41 set to ffffffff
+00001257790i[     ] addr c0022de3 len 1
+00001257790i[     ] Removing breakpoint at c0022de3
+00001257790i[     ] addr c000ef40 len 40
+00001257790i[     ] stepping
+00001257791i[     ] stopped with ac2
+00001257791i[     ] addr c002092a len 1
+00001257791i[     ] setting breakpoint at c0022de3
+00001275093i[     ] found breakpoint at c0022de3
+00001275093i[     ] stopped with ac1
+00001275093i[     ] reg 8 set to c0022de3
+00001275093i[     ] reg 41 set to ffffffff
+00001275093i[     ] addr c0022de3 len 1
+00001275093i[     ] Removing breakpoint at c0022de3
+00001275093i[     ] addr c000ef40 len 40
+00001275093i[     ] stepping
+00001275094i[     ] stopped with ac2
+00001275094i[     ] addr c002092a len 1
+00001275094i[     ] setting breakpoint at c0022de3
+00001347555i[     ] found breakpoint at c0022de3
+00001347555i[     ] stopped with ac1
+00001347555i[     ] reg 8 set to c0022de3
+00001347555i[     ] reg 41 set to ffffffff
+00001347555i[     ] addr c0022de3 len 1
+00001347555i[     ] Removing breakpoint at c0022de3
+00001347555i[     ] addr c000eec0 len 40
+00001347555i[     ] stepping
+00001347556i[     ] stopped with ac2
+00001347556i[     ] addr c002092a len 1
+00001347556i[     ] setting breakpoint at c0022de3
+00001365700i[     ] found breakpoint at c0022de3
+00001365700i[     ] stopped with ac1
+00001365700i[     ] reg 8 set to c0022de3
+00001365700i[     ] reg 41 set to ffffffff
+00001365700i[     ] addr c0022de3 len 1
+00001365700i[     ] Removing breakpoint at c0022de3
+00001365700i[     ] addr c000ef00 len 40
+00001365700i[     ] stepping
+00001365701i[     ] stopped with ac2
+00001365701i[     ] addr c002092a len 1
+00001365701i[     ] setting breakpoint at c0022de3
+00001369048i[     ] found breakpoint at c0022de3
+00001369048i[     ] stopped with ac1
+00001369048i[     ] reg 8 set to c0022de3
+00001369048i[     ] reg 41 set to ffffffff
+00001369048i[     ] addr c0022de3 len 1
+00001369048i[     ] Removing breakpoint at c0022de3
+00001369048i[     ] addr c000eec0 len 40
+00001369048i[     ] stepping
+00001369049i[     ] stopped with ac2
+00001369049i[     ] addr c002092a len 1
+00001369049i[     ] setting breakpoint at c0022de3
+00001502678i[     ] found breakpoint at c0022de3
+00001502678i[     ] stopped with ac1
+00001502678i[     ] reg 8 set to c0022de3
+00001502678i[     ] reg 41 set to ffffffff
+00001502678i[     ] addr c0022de3 len 1
+00001502678i[     ] Removing breakpoint at c0022de3
+00001502678i[     ] addr c000eec0 len 40
+00001502678i[     ] stepping
+00001502679i[     ] stopped with ac2
+00001502679i[     ] addr c002092a len 1
+00001502679i[     ] setting breakpoint at c0022de3
+00001522760i[     ] found breakpoint at c0022de3
+00001522760i[     ] stopped with ac1
+00001522760i[     ] reg 8 set to c0022de3
+00001522760i[     ] reg 41 set to ffffffff
+00001522760i[     ] addr c0022de3 len 1
+00001522760i[     ] Removing breakpoint at c0022de3
+00001522760i[     ] addr c000ef40 len 40
+00001522760i[     ] stepping
+00001522761i[     ] stopped with ac2
+00001522761i[     ] addr c002092a len 1
+00001522761i[     ] setting breakpoint at c0022de3
+00001539710i[     ] found breakpoint at c0022de3
+00001539710i[     ] stopped with ac1
+00001539710i[     ] reg 8 set to c0022de3
+00001539710i[     ] reg 41 set to ffffffff
+00001539710i[     ] addr c0022de3 len 1
+00001539710i[     ] Removing breakpoint at c0022de3
+00001539710i[     ] addr c000ef00 len 40
+00001539710i[     ] stepping
+00001539711i[     ] stopped with ac2
+00001539711i[     ] addr c002092a len 1
+00001539711i[     ] setting breakpoint at c0022de3
+00001597828i[     ] found breakpoint at c0022de3
+00001597828i[     ] stopped with ac1
+00001597828i[     ] reg 8 set to c0022de3
+00001597828i[     ] reg 41 set to ffffffff
+00001597828i[     ] addr c0022de3 len 1
+00001597828i[     ] Removing breakpoint at c0022de3
+00001597828i[     ] addr c000ee80 len 40
+00001597828i[     ] stepping
+00001597829i[     ] stopped with ac2
+00001597829i[     ] addr c002092a len 1
+00001597829i[     ] setting breakpoint at c0022de3
+00001623359i[     ] found breakpoint at c0022de3
+00001623359i[     ] stopped with ac1
+00001623359i[     ] reg 8 set to c0022de3
+00001623359i[     ] reg 41 set to ffffffff
+00001623359i[     ] addr c0022de3 len 1
+00001623359i[     ] Removing breakpoint at c0022de3
+00001623359i[     ] addr c000eec0 len 40
+00001623359i[     ] stepping
+00001623360i[     ] stopped with ac2
+00001623360i[     ] addr c002092a len 1
+00001623360i[     ] setting breakpoint at c0022de3
+00001629523i[     ] found breakpoint at c0022de3
+00001629523i[     ] stopped with ac1
+00001629523i[     ] reg 8 set to c0022de3
+00001629523i[     ] reg 41 set to ffffffff
+00001629523i[     ] addr c0022de3 len 1
+00001629523i[     ] Removing breakpoint at c0022de3
+00001629523i[     ] addr c000eec0 len 40
+00001629523i[     ] stepping
+00001629524i[     ] stopped with ac2
+00001629524i[     ] addr c002092a len 1
+00001629524i[     ] setting breakpoint at c0022de3
+00001651292i[     ] found breakpoint at c0022de3
+00001651292i[     ] stopped with ac1
+00001651292i[     ] reg 8 set to c0022de3
+00001651292i[     ] reg 41 set to ffffffff
+00001651292i[     ] addr c0022de3 len 1
+00001651292i[     ] Removing breakpoint at c0022de3
+00001651292i[     ] addr c000eec0 len 40
+00001651292i[     ] stepping
+00001651293i[     ] stopped with ac2
+00001651293i[     ] addr c002092a len 1
+00001651293i[     ] setting breakpoint at c0022de3
+00001651566i[     ] found breakpoint at c0022de3
+00001651566i[     ] stopped with ac1
+00001651566i[     ] reg 8 set to c0022de3
+00001651566i[     ] reg 41 set to ffffffff
+00001651566i[     ] addr c0022de3 len 1
+00001651566i[     ] Removing breakpoint at c0022de3
+00001651566i[     ] addr c000ee40 len 40
+00001651566i[     ] stepping
+00001651567i[     ] stopped with ac2
+00001651567i[     ] addr c002092a len 1
+00001651567i[     ] setting breakpoint at c0022de3
+00001670657i[     ] found breakpoint at c0022de3
+00001670657i[     ] stopped with ac1
+00001670657i[     ] reg 8 set to c0022de3
+00001670657i[     ] reg 41 set to ffffffff
+00001670657i[     ] addr c0022de3 len 1
+00001670657i[     ] Removing breakpoint at c0022de3
+00001670657i[     ] addr c000ee80 len 40
+00001670657i[     ] stepping
+00001670658i[     ] stopped with ac2
+00001670658i[     ] addr c002092a len 1
+00001670658i[     ] setting breakpoint at c0022de3
+00001672189i[     ] found breakpoint at c0022de3
+00001672189i[     ] stopped with ac1
+00001672189i[     ] reg 8 set to c0022de3
+00001672189i[     ] reg 41 set to ffffffff
+00001672189i[     ] addr c0022de3 len 1
+00001672189i[     ] Removing breakpoint at c0022de3
+00001672189i[     ] addr c0104f80 len 40
+00001672189i[     ] stepping
+00001672190i[     ] stopped with ac2
+00001672190i[     ] addr c002092a len 1
+00001672190i[     ] setting breakpoint at c0022de3
+00001672425i[     ] found breakpoint at c0022de3
+00001672425i[     ] stopped with ac1
+00001672425i[     ] reg 8 set to c0022de3
+00001672425i[     ] reg 41 set to ffffffff
+00001672425i[     ] addr c0022de3 len 1
+00001672425i[     ] Removing breakpoint at c0022de3
+00001672425i[     ] addr c0104f80 len 40
+00001672425i[     ] stepping
+00001672426i[     ] stopped with ac2
+00001672426i[     ] addr c002092a len 1
+00001672426i[     ] setting breakpoint at c0022de3
+00001673906i[     ] found breakpoint at c0022de3
+00001673906i[     ] stopped with ac1
+00001673906i[     ] reg 8 set to c0022de3
+00001673906i[     ] reg 41 set to ffffffff
+00001673906i[     ] addr c0022de3 len 1
+00001673906i[     ] Removing breakpoint at c0022de3
+00001673906i[     ] addr c000ee40 len 40
+00001673906i[     ] stepping
+00001673907i[     ] stopped with ac2
+00001673907i[     ] addr c002092a len 1
+00001673907i[     ] setting breakpoint at c0022de3
+00001699326i[     ] found breakpoint at c0022de3
+00001699326i[     ] stopped with ac1
+00001699326i[     ] reg 8 set to c0022de3
+00001699326i[     ] reg 41 set to ffffffff
+00001699326i[     ] addr c0022de3 len 1
+00001699326i[     ] Removing breakpoint at c0022de3
+00001699326i[     ] addr c000ee40 len 40
+00001699326i[     ] stepping
+00001699327i[     ] stopped with ac2
+00001699327i[     ] addr c002092a len 1
+00001699327i[     ] setting breakpoint at c0022de3
+00001782231i[     ] found breakpoint at c0022de3
+00001782231i[     ] stopped with ac1
+00001782231i[     ] reg 8 set to c0022de3
+00001782231i[     ] reg 41 set to ffffffff
+00001782231i[     ] addr c0022de3 len 1
+00001782231i[     ] Removing breakpoint at c0022de3
+00001782231i[     ] addr c000ee80 len 40
+00001782231i[     ] stepping
+00001782232i[     ] stopped with ac2
+00001782232i[     ] addr c002092a len 1
+00001782232i[     ] setting breakpoint at c0022de3
+00001803903i[     ] found breakpoint at c0022de3
+00001803903i[     ] stopped with ac1
+00001803903i[     ] reg 8 set to c0022de3
+00001803903i[     ] reg 41 set to ffffffff
+00001803903i[     ] addr c0022de3 len 1
+00001803903i[     ] Removing breakpoint at c0022de3
+00001803903i[     ] addr c000ee40 len 40
+00001803903i[     ] stepping
+00001803904i[     ] stopped with ac2
+00001803904i[     ] addr c002092a len 1
+00001803904i[     ] setting breakpoint at c0022de3
+00001823139i[     ] found breakpoint at c0022de3
+00001823139i[     ] stopped with ac1
+00001823139i[     ] reg 8 set to c0022de3
+00001823139i[     ] reg 41 set to ffffffff
+00001823139i[     ] addr c0022de3 len 1
+00001823139i[     ] Removing breakpoint at c0022de3
+00001823139i[     ] addr c000ee80 len 40
+00001823139i[     ] stepping
+00001823140i[     ] stopped with ac2
+00001823140i[     ] addr c002092a len 1
+00001823140i[     ] setting breakpoint at c0022de3
+00001824880i[     ] found breakpoint at c0022de3
+00001824880i[     ] stopped with ac1
+00001824880i[     ] reg 8 set to c0022de3
+00001824880i[     ] reg 41 set to ffffffff
+00001824880i[     ] addr c0022de3 len 1
+00001824880i[     ] Removing breakpoint at c0022de3
+00001824880i[     ] addr c0105fc0 len 40
+00001824880i[     ] stepping
+00001824881i[     ] stopped with ac2
+00001824881i[     ] addr c002092a len 1
+00001824881i[     ] setting breakpoint at c0022de3
+00001826372i[     ] found breakpoint at c0022de3
+00001826372i[     ] stopped with ac1
+00001826372i[     ] reg 8 set to c0022de3
+00001826372i[     ] reg 41 set to ffffffff
+00001826372i[     ] addr c0022de3 len 1
+00001826372i[     ] Removing breakpoint at c0022de3
+00001826372i[     ] addr c000ee40 len 40
+00001826372i[     ] stepping
+00001826373i[     ] stopped with ac2
+00001826373i[     ] addr c002092a len 1
+00001826373i[     ] setting breakpoint at c0022de3
+00001851792i[     ] found breakpoint at c0022de3
+00001851792i[     ] stopped with ac1
+00001851792i[     ] reg 8 set to c0022de3
+00001851792i[     ] reg 41 set to ffffffff
+00001851792i[     ] addr c0022de3 len 1
+00001851792i[     ] Removing breakpoint at c0022de3
+00001851792i[     ] addr c000ee40 len 40
+00001851792i[     ] addr c0033f88 len 4
+00001851792i[     ] addr 1c len 4
+00001851792i[     ] stepping
+00001851793i[     ] stopped with ac2
+00001851793i[     ] addr c002092a len 1
+00001851793i[     ] setting breakpoint at c0022de3
+00001934697i[     ] found breakpoint at c0022de3
+00001934697i[     ] stopped with ac1
+00001934697i[     ] reg 8 set to c0022de3
+00001934697i[     ] reg 41 set to ffffffff
+00001934697i[     ] addr c0022de3 len 1
+00001934697i[     ] Removing breakpoint at c0022de3
+00001934697i[     ] addr c000ee80 len 40

@@ -1,0 +1,115 @@
+Project: 1
+CS439
+Names:
+Person 1 : Kevin Nguyen
+UTEID : kdn433
+CS Login : kxnguyen
+Email : kxnguyen60@gmail.com
+
+
+Person 2 : Sangwon Lee
+UTEID : sl34645
+CS Login : bearbox
+Email : fhqksl@hotmail.com
+
+
+----------------------------------------------------------------------------------------------------------------
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/15/2016 at 1:00 pm
+Total Time: 2 hours
+Driver Order and Time Length:
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/16/2016 at 2:00 pm
+Total Time: 4 hours
+Driver Order and Time Length:
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/17/2016 at 1:00 pm
+Total Time: 7 hours
+Driver Order and Time Length:
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/18/2016 at 3:00 pm
+Total Time: 3 hours
+Driver Order and Time Length:
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/22/2016 at 1:00 pm
+Total Time: 4 hours
+Driver Order and Time Length:
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/25/2016 at 1:00 pm
+Total Time: 8 hours
+Driver Order and Time Length:
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+
+Who: Sangwon Lee and Kevin Nguyen
+Date & Time: 2/26/2016 at 11:30 pm
+Total Time: 4 hours
+Driver Order and Time Length:
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
+Sangwon, 30 minutes
+Kevin, 30 minutes
