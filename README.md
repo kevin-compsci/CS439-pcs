@@ -1,5 +1,5 @@
 # CS439pcs
-Principals of Computer Systems class projects. Design and assignment by Dr. Norman from the University of Austin at Texas. Contributions from authors, Universities, and lecturers belong rightfully to them. These assignments revolve around Pintos, an artificial shell for OS. These projects were completed in 2016.
+Principals of Computer Systems class projects. Course, design, and assignment by Dr. Norman from the University of Austin at Texas. Contributions from authors, affiliated Universities, and lecturers belong rightfully to them. These assignments revolve around Pintos, an artificial shell for OS. These projects were completed in 2016.
 
 
 A1 - Threads
